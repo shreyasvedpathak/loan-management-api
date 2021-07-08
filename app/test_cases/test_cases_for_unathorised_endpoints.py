@@ -19,9 +19,11 @@ class SecurityTests(unittest.TestCase):
     def test_9_new_loan_without_token(self):
         test_name = "Requesting New Loan without authorized Token"
         try:
+            # Making a call to a endpoint without a authorized token
             resp = requests.post("{}/{}".format(self.API_URL, "new-loan"))
             self.assertEqual(resp.status_code, 401)
             self.assertTrue(b'Missing token' in resp.content)
+            
             print(colored(f"\u2713 Test 9: {test_name} Passed", "green"))
         except:
             print(colored(f"\u2717 Test 9: {test_name} Failed", "red"))
@@ -29,10 +31,12 @@ class SecurityTests(unittest.TestCase):
     def test_10_new_loan_with_invalid_token(self):
         test_name = "Requesting New Loan with invalid Token"
         try:
+            # Making a call to a endpoint with a invalid token
             resp = requests.post("{}/{}".format(self.API_URL, "new-loan"),
                                  headers={'x-access-token': 'random_string_as_token'})
             self.assertEqual(resp.status_code, 401)
             self.assertTrue(b'Invalid token' in resp.content)
+            
             print(colored(f"\u2713 Test 10: {test_name} Passed", "green"))
         except:
             print(colored(f"\u2717 Test 10: {test_name} Failed", "red"))
@@ -40,6 +44,7 @@ class SecurityTests(unittest.TestCase):
     def test_11_customer_access_admin(self):
         test_name = "Customer trying to access Admin endpoints"
         try:
+            # Accessing unauthorised endpoints
             for customer in self.customers:
                 resp = requests.post("{}/{}".format(self.API_URL, "login"),
                                      headers={"Authorization": _basic_auth_str(customer['username'], customer['password'])})
@@ -71,8 +76,6 @@ class SecurityTests(unittest.TestCase):
                 headers={"x-access-token": token})
             
             self.assertEqual(resp.status_code, 401)
-            # self.assertTrue(
-            #     b"Your application for Agent has not been approved by the Admin." in resp.content)
             print(colored(f"\u2713 Test 12: {test_name} Passed", "green"))
         except Exception as e:
             print(e)
@@ -99,17 +102,17 @@ class SecurityTests(unittest.TestCase):
             self.customer_access_tokens.append(data['token'])
             
         try:
-            for i in loans_by_applicant_2:
+            for loan in loans_by_applicant_2:
                 resp = requests.post("{}/{}".format(self.API_URL, "new-loan"),
                                      headers={
                                          "x-access-token": self.customer_access_tokens[1]},
-                                     json=i)
+                                     json=loan)
 
-            for i in loans_by_applicant_3:
+            for loan in loans_by_applicant_3:
                 resp = requests.post("{}/{}".format(self.API_URL, "new-loan"),
                                      headers={
                                          "x-access-token": self.customer_access_tokens[2]},
-                                     json=i)
+                                     json=loan)
 
             loans_by_applicant_2 = requests.get("{}/{}".format(self.API_URL, "show-loans"),
                                                 headers={"x-access-token": self.customer_access_tokens[1]})
@@ -118,10 +121,14 @@ class SecurityTests(unittest.TestCase):
 
             self.assertEqual(loans_by_applicant_2.status_code, 200)
             self.assertEqual(loans_by_applicant_3.status_code, 200)
-            '''
-            Now applicant2 must have 4 loans ,as we have added 1 earlier 
-            and applicant3 must have 3 loans
-            # '''
+
+            # Checking number of loan application by applicants
+            # After adding these loans, applicant2 has total 4 loans and 
+            # applicant3 has 3 loans
+
+            self.assertEqual(len(loans_by_applicant_2.json()['Loans']), 4)
+            self.assertEqual(len(loans_by_applicant_3.json()['Loans']), 3)
+            
             print(colored(f"\u2713 Test 13: {test_name} Passed", "green"))
         except Exception as e:
             print(e)
