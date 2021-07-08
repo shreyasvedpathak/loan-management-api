@@ -86,6 +86,7 @@ def show_user(current_user):
 @admin.route("/show-agent-applications", methods=["GET"])
 @token_required
 def get_agents_requests(current_user):
+    print(current_user.role)
     if current_user.role in [ROLE['AGENT'], ROLE['CUSTOMER']]:
         return jsonify({"Message": "You are not authorized to open this page."})
 
@@ -129,9 +130,13 @@ def approve_loan(current_user, loan_id):
         loan = Loan.query.filter_by(id=loan_id).first()
     except Exception:
         return jsonify({"Message": f"There is no loan with id: {loan_id}"}), 400
+    
+    if loan.state == LOAN_STATUS['APPROVED']:
+        return jsonify({"Message": f"Loan ID: {loan_id} is already approved."}), 400
+    
     loan.state = LOAN_STATUS['APPROVED']
     db.session.commit()
-    return jsonify({"Message": "The loan is successfully approved."})
+    return jsonify({"Message": "The loan is successfully approved."}), 200
 
 
 @admin.route("/reject-loan/<loan_id>", methods=["GET"])

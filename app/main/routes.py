@@ -27,7 +27,6 @@ def login():
     
     if bcrypt.check_password_hash(user.password, auth.password):
         if user.role == ROLE['AGENT']:
-            print(user.approved, user.email)
             if user.approved == False:
                 return make_response('Your application for Agent has not been approved by the Admin.', 401, {'WWW-Authenticate': 'Basic realm="Login Required!"'})
         token = jwt.encode({'pub_id': user.pub_id, 
