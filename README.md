@@ -2,6 +2,7 @@
 
 ## Table of Contents
 
+- [Introduction](#introduction)
 - [Frameworks](#frameworks)
 - [Features](#features)
   - [Code Features](#code-features)
@@ -9,9 +10,9 @@
 - [Folder Structure](#folder-structure)
 - [Installing](#installing)
 - [Test Cases](#test-cases)
-  - [Database](#1-database)
-  - [Unauthorised API calls](#2-unauthorised-api-calls)
-  - [API Calls](#3-api-calls)
+  - [Database](#database)
+  - [Unauthorised API calls](#unauthorised-api-calls)
+  - [API Calls](#api-calls)
 - [Working](#working)
 - [Endpoints](#endpoints)
   - [Common](#common)
@@ -19,7 +20,9 @@
   - [Agent](#agent)
   - [Admin](#admin)
 
----
+## Introduction
+
+I created this Loan Management API as a part of internship hiring challenge.
 
 ## Frameworks
 
@@ -100,7 +103,7 @@ docker-compose run app
 
 ## Test Cases
 
-### Database
+### 1. Database
 
 These test cases check if database is properly created and whether data is getting inserted properly  
 
@@ -110,7 +113,7 @@ These test cases check if database is properly created and whether data is getti
 - Do not delete or modify data after running these test cases.
 - Do not run these tests more than once, as you will face constraint errors as it will try to add same data again.  
 
-### Unauthorised API calls
+### 2. Unauthorised API calls
 
 These test cases check if any user is trying to make API calls without a valid token or if they make API calls to the endpoints they are not authorized to make
 
@@ -119,7 +122,7 @@ For example:
 - Requesting New Loan without authorized Token.
 - Customer trying to access Admin endpoints.
 
-### API Calls
+### 3. API Calls
 
 These test cases check if appropriate response is getting sent from their corresponding endpoints
 
@@ -183,6 +186,11 @@ docker-compose exec app python setup_db.py
 
 ## Endpoints
 
+1. [Common](#common)
+2. [Customer](#customer)
+3. [Agent](#agent)
+4. [Admin](#admin)
+
 ### Common
 
 **POST**:
@@ -215,7 +223,7 @@ Show loans
 ```json
 /show-loans
 
-Parameters:
+Query Parameters:
     status : 
         all      - shows all loans   
         new      - shows all new loans    
@@ -223,8 +231,8 @@ Parameters:
         rejected - shows all rejected loans   
         
     filter_type : 
-        all     - shows all loans
-        updated - shows all updated loans
+        all      - shows all loans
+        updated  - shows all updated loans
         
     start   : shows all the dates from the passed date (Format: YYYY-MM-DD)
     end     : shows all the dates till the passed date (Format: YYYY-MM-DD) 
@@ -317,7 +325,7 @@ Show users
 ```json
 /show-users
 
-Parameters:
+Query Parameters:
     status : 
         all      - shows all users (default)
         agents   - shows all agents
@@ -329,7 +337,7 @@ Show agent applications
 ```json
 /show-agent-applications
 
-Parameters:
+Query Parameters:
     status:
         all        - shows all applications (default)
         approved   - shows all approved applications
